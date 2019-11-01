@@ -1,5 +1,5 @@
 5 13  # 5 gates 13 wires
-4 32  # 4 32-bit inputs
+8 16  # 4 32-bit inputs
 1 1   # 1 1-bit output
 2 1 0 1 8 zero_equal.txt
 2 1 2 3 0 zero_equal.txt
