@@ -36,3 +36,6 @@ circuit.outputs = newOutputs;
 
 console.log(circuit);
 console.log(JSON.stringify(circuit, 2, 2));
+
+outpath = process.argv[3] == null ? null : 'circuits/' + process.argv[3]
+console.log(parser.stringify(circuit, outpath));

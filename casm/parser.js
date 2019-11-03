@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 function parse(path) {
-  const text = fs.readFileSync(path, 'utf8');
+  const text = typeof(path) === "object" ? path : fs.readFileSync(path, 'utf8');
 
   var circuit = {
     wires: 0, gates: 0,
@@ -40,4 +40,36 @@ function parse(path) {
   return circuit;
 }
 
-exports.parse = parse;
+function stringify(circuit, path) {
+  var bristol = [];
+
+  // Encode header information and gates
+  bristol[0] = [circuit.gates, circuit.wires];
+  bristol[1] = [2, circuit.inputs.length/2];  // 1 input per party
+  bristol[2] = [1, circuit.outputs.length];  // 1 output
+
+  for (var i = 0; i < circuit.gate.length; i++) {
+    const gate = circuit.gate[i];
+
+    bristol[i+3] = [
+      gate.inputs.length,
+      gate.outputs.length,
+      ...gate.inputs,
+      ...gate.outputs,
+      gate.type
+    ];
+  }
+
+  // Stringify
+  var text = bristol.map(line => line.join(' ')).join('\n');
+
+  if (typeof(path) === 'string') {
+    fs.writeFile(path, text, new Function());
+  }
+  return text;
+}
+
+module.exports = {
+  parse: parse,
+  stringify: stringify
+};
