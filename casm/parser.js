@@ -16,11 +16,11 @@ function parse(path) {
   circuit.gates = +bristol[0][0];
   circuit.wires = +bristol[0][1];
 
-  for (var i = 0; i < bristol[1][1]; i++) {
+  for (var i = 0; i < bristol[1].reduce((a,b) => a*b); i++) {
     circuit.inputs.push(i);
   }
 
-  for (i = circuit.wires - bristol[2][1]; i < circuit.wires; i++) {
+  for (i = circuit.wires - bristol[2].reduce((a,b) => a*b); i < circuit.wires; i++) {
     circuit.outputs.push(i);
   }
 
