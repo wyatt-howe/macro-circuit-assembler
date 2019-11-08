@@ -34,5 +34,12 @@ function renameOutputs(currentOutputs, newOutputs, gates) {
   }
 }
 
-exports.renameAndDump = renameAndDump;
-exports.renameOutputs = renameOutputs;
+function evalDirectives(circuit) {
+  
+}
+
+module.exports = {
+  renameAndDump: renameAndDump,
+  renameOutputs: renameOutputs,
+  evalDirectives: evalDirectives
+};
