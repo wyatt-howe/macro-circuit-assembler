@@ -2,12 +2,12 @@
 Expand a macro-circuit into standard Bristol format
 
 ## Running
-The circuit assembler is located in `casm/casm.js` and accepts two parameters like follows.
+The circuit assembler is located in `casm/casm.js` and accepts two parameters like follows.  Macros and circuits can be assembled from anywhere but default to their respective directories if not otherwise specified.
 ```shell
-node casm/casm.js [macro/]<macro>.casm [circuits/]<bristol>.txt
+node casm/casm.js [macro/]<macro>.casm [[circuits/]<bristol>.txt]
 ```
 
-For example, to assemble the 8-bit AND circuit, run:
+For example, to assemble and save the 8-bit AND circuit, run:
 ```shell
 node casm/casm.js and8.casm and8.txt
 ```
