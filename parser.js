@@ -65,7 +65,7 @@ function parse(path) {
   for (i = 0; i < bristol.length-3; i++) {
     var args = bristol[i+3];
 
-    var gate = {inputs: [], outputs: [], type: args[3+(+args[0])]};
+    var gate = {inputs: [], outputs: [], type: args[2+(+args[0])+(+args[1])]};
     for (var j = 0; j < parseInt(args[0]); j++) {
       gate.inputs.push(+args[2+j]);
     }
