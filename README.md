@@ -2,7 +2,7 @@
 Expand a macro-circuit into standard Bristol format
 
 ## Running
-The circuit assembler is located in `casm/` and accepts two parameters like follows.
+The circuit assembler is located in `casm/casm.js` and accepts two parameters like follows.
 ```shell
 node casm/casm.js [macro/]<macro>.casm [circuits/]<bristol>.txt
 ```
@@ -17,7 +17,7 @@ Macro format provides the following directives:
 
 ```as3
 [start:end]  // wires numbered start to end
-[start:end:increment]  // wires in sequence starting
+[start:end:increment]  // incremental numbered wires
 [start|>multiplicity]  // multiple wires from a starting id
 ```
 
