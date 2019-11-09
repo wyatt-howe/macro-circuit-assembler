@@ -15,4 +15,4 @@ Macro format provides the following directives:
 [start|>multiplicity]  // multiple wires from a starting id
 ```
 
-For example `[10|>5]` represents `10 11 12 13 14` and `[2:10:2]` gives `2 4 6 8 10`.  Using a negative increment is also legal, such as [end:start:-1], which reverses a range of inputs.
+For example `[10|>5]` represents `10 11 12 13 14` and `[2:10:2]` gives `2 4 6 8 10`.  Using a negative increment is also legal.  For example `[end:start:-1]` reverses a range of inputs.  Line comments are supported and marked by hashes "#". 
