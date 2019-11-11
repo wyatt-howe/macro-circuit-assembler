@@ -94,13 +94,9 @@ function stringify(circuit, path) {
   for (var i = 0; i < circuit.gate.length; i++) {
     const gate = circuit.gate[i];
 
-    bristol[i+3] = [
-      gate.inputs.length,
-      gate.outputs.length,
-      ...gate.inputs,
-      ...gate.outputs,
-      gate.type
-    ];
+    bristol[i+3] = gate.inputs.concat(gate.outputs);
+    bristol[i+3].unshift(gate.inputs.length, gate.outputs.length);
+    bristol[i+3].push(gate.type);
   }
 
   // Stringify

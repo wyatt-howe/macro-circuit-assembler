@@ -34,6 +34,42 @@ function renameOutputs(currentOutputs, newOutputs, gates) {
   }
 }
 
+function removeGaps(circuit) {
+  const real = {};
+  for (let g of circuit.gate) {
+    for (let w of g.inputs.concat(g.outputs)) {
+        real[w] = true;
+    }
+  }
+
+  const rename = {};
+  let first_gap = null;
+  for (var i = 0; i < circuit.wires; i++) {
+    if (real[i]) {
+      if (first_gap != null) {
+        rename[i] = first_gap;
+        first_gap++;
+      }
+    } else if (first_gap == null) {
+      first_gap = i;
+    }
+  }
+
+  circuit.wires = first_gap;
+  for (let g of circuit.gate) {
+    for (var i = 0; i < g.inputs.length; i++) {
+      if (rename[g.inputs[i]] != null) {
+        g.inputs[i] = rename[g.inputs[i]];
+      }
+    }
+    for (var i = 0; i < g.outputs.length; i++) {
+      if (rename[g.outputs[i]] != null) {
+        g.outputs[i] = rename[g.outputs[i]];
+      }
+    }
+  }
+}
+
 function evalDirectives(circuit) {
   
 }
@@ -41,5 +77,6 @@ function evalDirectives(circuit) {
 module.exports = {
   renameAndDump: renameAndDump,
   renameOutputs: renameOutputs,
+  removeGaps: removeGaps,
   evalDirectives: evalDirectives
 };
