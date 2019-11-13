@@ -1,13 +1,12 @@
 const parser = require('./parser.js');
 
-function renameAndDump(macro, counter) {
-  const circuit = parser.parse('circuits/' + macro.type);
-  for (var i = 0; i < circuit.gate.length; i++) {
-    var gate = circuit.gate[i];
-    gate.inputs = rename(macro, counter, circuit, gate.inputs);
-    gate.outputs = rename(macro, counter, circuit, gate.outputs);
+function renameAndDump(macroDescription, macroCircuit, counter) {
+  for (var i = 0; i < macroCircuit.gate.length; i++) {
+    var gate = macroCircuit.gate[i];
+    gate.inputs = rename(macroDescription, counter, macroCircuit, gate.inputs);
+    gate.outputs = rename(macroDescription, counter, macroCircuit, gate.outputs);
   }
-  return circuit;
+  return macroCircuit;
 }
 
 function rename(macro, counter, circuit, wires) {
@@ -71,7 +70,7 @@ function removeGaps(circuit) {
 }
 
 function evalDirectives(circuit) {
-  
+
 }
 
 module.exports = {
