@@ -56,6 +56,6 @@ const circuit = assemble(path);
 
 console.log(circuit);
 console.log(JSON.stringify(circuit, 2, 2));
-console.log(parser.stringify(circuit, process.argv[3] == null ? null : 'circuits/' + process.argv[3]));
+console.log(parser.stringify(circuit, process.argv[3] == null ? null : process.argv[3]));
 
 module.exports.assemble = assemble;

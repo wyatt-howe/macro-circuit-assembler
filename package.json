@@ -1,0 +1,47 @@
+{
+  "author": "Wyatt Howe",
+  "authors": [
+    "Wyatt Howe",
+    "Kinan Dak Albab"
+  ],
+  "bugs": {
+    "url": "https://github.com/wyatt-howe/macro-circuit-assembler/tree/casm"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "Kinan Dak Albab",
+      "email": "babman@bu.edu",
+      "url": "http://cs-people.bu.edu/babman/"
+    }
+  ],
+  "deprecated": false,
+  "description": "Macro Circuit Assembler - Expand boolean circuit macros into a standard Bristol circuit format",
+  "homepage": "https://github.com/wyatt-howe/macro-circuit-assembler/tree/casm#readme",
+  "keywords": [
+    "assembler",
+    "garbled",
+    "circuit",
+    "circuits",
+    "garbled-gates",
+    "garbled-circuit",
+    "boolean-circuit",
+    "bristol-circuit",
+    "bristol",
+    "format",
+    "mpc",
+    "multiparty",
+    "scale-mamba"
+  ],
+  "license": "MIT",
+  "main": "casm.js",
+  "name": "casm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wyatt-howe/macro-circuit-assembler.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.2.2"
+}
