@@ -1,4 +1,4 @@
-const fs = require('fs');
+'use strict';
 
 function range(start, end, increment) {
   const result = [];
@@ -9,13 +9,13 @@ function range(start, end, increment) {
   return result;
 }
 
-function parse(path) {
-  const text = typeof(path) === "object" ? path : fs.readFileSync(path, 'utf8');
-
-  var circuit = {
+function parse(text) {
+  let circuit = {
     wires: 0, gates: 0,
     inputs: [], outputs: [],
-    gate: []
+    gate: [],
+    inputLine: '',
+    outputLine: ''
   };
 
   const bristol = text.split('\n').map(function (line) {
@@ -41,12 +41,12 @@ function parse(path) {
         if (range_.indexOf(':') > -1) {
           range_ = range_.split(':');
           range_ = range(+range_[0], +range_[1], +range_[2] || 1);
-          line = line.splice(0, j).concat(range_, line.slice(1))
+          line = line.splice(0, j).concat(range_, line.slice(1));
           j += range_.length - 1;
         } else if (range_.indexOf('|>') > -1) {
           range_ = range_.split('|>');
           range_ = range(+range_[0], +range_[0] + +range_[1] - 1, 1);
-          line = line.splice(0, j).concat(range_, line.slice(1))
+          line = line.splice(0, j).concat(range_, line.slice(1));
           j += range_.length - 1;
         }
       }
@@ -58,40 +58,45 @@ function parse(path) {
   });
 
   circuit.wires = +bristol[0][1];
-  for (var i = 0; i < (bristol[1][0] * bristol[1][1]); i++) {
+  const inputsCount = bristol[1].slice(1).reduce((a, v) => parseInt(v) + a, 0);
+  for (let i = 0; i < inputsCount; i++) {
     circuit.inputs.push(i);
   }
 
-  for (i = 0; i < bristol.length-3; i++) {
-    var args = bristol[i+3];
+  for (let i = 0; i < bristol.length-3; i++) {
+    let args = bristol[i+3];
 
-    var gate = {inputs: [], outputs: [], type: args[2+(+args[0])+(+args[1])]};
-    for (var j = 0; j < parseInt(args[0]); j++) {
+    let gate = {inputs: [], outputs: [], type: args[2+(+args[0])+(+args[1])]};
+    for (let j = 0; j < parseInt(args[0]); j++) {
       gate.inputs.push(+args[2+j]);
     }
-    for (var j = 0; j < parseInt(args[1]); j++) {
+    for (let j = 0; j < parseInt(args[1]); j++) {
       gate.outputs.push(+args[2+(+args[0])+j]);
     }
     circuit.gate.push(gate);
   }
 
   circuit.gates = circuit.gate.length;
-  for (i = circuit.wires - (bristol[2][0] * bristol[2][1]); i < circuit.wires; i++) {
+  const outputsCount = bristol[2].slice(1).reduce((a, v) => parseInt(v) + a, 0);
+  for (let i = circuit.wires - outputsCount; i < circuit.wires; i++) {
     circuit.outputs.push(i);
   }
+
+  circuit.inputLine = bristol[1];
+  circuit.outputLine = bristol[2];
 
   return circuit;
 }
 
-function stringify(circuit, path) {
-  var bristol = [];
+function stringify(circuit) {
+  const bristol = [];
 
   // Encode header information and gates
   bristol[0] = [circuit.gates, circuit.wires];
-  bristol[1] = [2, circuit.inputs.length/2];  // 1 input per party
-  bristol[2] = [1, circuit.outputs.length];  // 1 output
+  bristol[1] = circuit.inputLine;
+  bristol[2] = circuit.outputLine;
 
-  for (var i = 0; i < circuit.gate.length; i++) {
+  for (let i = 0; i < circuit.gate.length; i++) {
     const gate = circuit.gate[i];
 
     bristol[i+3] = gate.inputs.concat(gate.outputs);
@@ -100,12 +105,7 @@ function stringify(circuit, path) {
   }
 
   // Stringify
-  var text = bristol.map(line => line.join(' ')).join('\n');
-
-  if (typeof(path) === 'string') {
-    fs.writeFile(path, text, new Function());
-  }
-  return text;
+  return bristol.map(line => line.join(' ')).join('\n');
 }
 
 module.exports = {

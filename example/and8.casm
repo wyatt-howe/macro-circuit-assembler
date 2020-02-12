@@ -1,0 +1,7 @@
+3 12
+2 4 4
+1 2
+4 1 [0|>4] 8 ./and4.txt # you can also use absolute paths
+4 1 [4:7] 9 and4.txt # relative paths are resolved relative to where this file is
+2 1 [8|>3] AND
+1 1 10 11 INV

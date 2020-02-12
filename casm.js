@@ -1,61 +1,77 @@
+'use strict';
+
+const pathlib = require('path');
 const fs = require('fs');
 
 const macro = require('./macro.js');
 const parser = require('./parser.js');
 
-function assemble(path) {
-  const subassemble = function (path) {
-    // load and parse
-    const circuit = parser.parse(path);
+function assemble(circuit, currentDir) {
+  currentDir = currentDir == null ? '' : currentDir;
 
-    // handle macros
-    var counter = circuit.wires;
-    var gates = [];
-    for (let i = 0; i < circuit.gate.length; i++) {
-      // case 1: plain gate
-      var plainGates = ['AND', 'OR', 'INV'];
-      if (plainGates.indexOf(circuit.gate[i].type) > -1) {
-        gates.push(circuit.gate[i]);
-        continue;
-      }
-
-      let parsed;
-      if (circuit.gate[i].type.endsWith('.casm')) {
-        // case 2: nested macro
-        parsed = assemble(circuit.gate[i].type);
-      } else {
-        // case 3: simple gate file
-        parsed = parser.parse(circuit.gate[i].type);
-      }
-
-      const result = macro.renameAndDump(circuit.gate[i], parsed, counter);
-      gates = gates.concat(result.gate);
-      counter += result.wires;
+  // handle macros
+  let counter = circuit.wires;
+  let gates = [];
+  for (let i = 0; i < circuit.gate.length; i++) {
+    // case 1: plain gate
+    let plainGates = ['AND', 'OR', 'INV'];
+    if (plainGates.indexOf(circuit.gate[i].type) > -1) {
+      gates.push(circuit.gate[i]);
+      continue;
     }
-    circuit.gate = gates;
 
-    // update meta data
-    circuit.gates = circuit.gate.length;
+    let parsed;
+    const nestedpath = pathlib.isAbsolute(circuit.gate[i].type) ? circuit.gate[i].type : pathlib.join(currentDir, circuit.gate[i].type);
+    if (circuit.gate[i].type.endsWith('.casm')) {
+      // case 2: nested macro
+      parsed = assemble(parser.parse(fs.readFileSync(nestedpath, 'utf8')), pathlib.dirname(nestedpath));
+    } else {
+      // case 3: simple gate file
+      parsed = parser.parse(fs.readFileSync(nestedpath, 'utf8'));
+    }
 
-    const newOutputs = circuit.outputs.map(i => i + counter);
-    circuit.wires = Math.max.apply(null, newOutputs) + 1;
-    macro.renameOutputs(circuit.outputs, newOutputs, circuit.gate);
-    circuit.outputs = newOutputs;
+    const result = macro.renameAndDump(circuit.gate[i], parsed, counter);
+    gates = gates.concat(result.gate);
+    counter += result.wires;
+  }
+  circuit.gate = gates;
 
-    return circuit;
-  };
+  // update meta data
+  circuit.gates = circuit.gate.length;
 
-  const circuit = subassemble(path);
+  const newOutputs = circuit.outputs.map(i => i + counter);
+  circuit.wires = Math.max.apply(null, newOutputs) + 1;
+  macro.renameOutputs(circuit.outputs, newOutputs, circuit.gate);
+  circuit.outputs = newOutputs;
+
   macro.removeGaps(circuit);
+
   return circuit;
 }
 
-// Retreive Circuits
-var path = process.argv[2];
-const circuit = assemble(path);
+function parseAndAssemble(inputPath) {
+  const inputCircuit = parser.parse(fs.readFileSync(inputPath, 'utf8'));
+  const assembledCircuit = assemble(inputCircuit, pathlib.dirname(inputPath));
+  return parser.stringify(assembledCircuit);
+}
 
-console.log(circuit);
-console.log(JSON.stringify(circuit, 2, 2));
-console.log(parser.stringify(circuit, process.argv[3] == null ? null : process.argv[3]));
+// Read command line args if run as a node.js application
+if (require.main === module) {
+  const inputPath = process.argv[2];
+  const outputPath = process.argv[3];
 
-module.exports.assemble = assemble;
+  const assembledString = parseAndAssemble(inputPath);
+
+  if (outputPath) {
+    fs.writeFileSync(outputPath, assembledString);
+  } else {
+    console.log(assembledString);
+  }
+}
+
+module.exports = {
+  parse: parser.parse,
+  assemble: assemble,
+  parseAndAssemble: parseAndAssemble,
+  stringify: parser.stringify
+};

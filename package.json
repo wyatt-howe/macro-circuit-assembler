@@ -35,13 +35,24 @@
   ],
   "license": "MIT",
   "main": "casm.js",
+  "files": [
+    "casm.js",
+    "parser.js",
+    "macro.js",
+    "package.json",
+    "README.md"
+  ],
   "name": "casm",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wyatt-howe/macro-circuit-assembler.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint *.js"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
   },
   "version": "0.2.2"
 }

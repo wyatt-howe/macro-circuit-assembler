@@ -1,8 +1,8 @@
-const parser = require('./parser.js');
+'use strict';
 
 function renameAndDump(macroDescription, macroCircuit, counter) {
-  for (var i = 0; i < macroCircuit.gate.length; i++) {
-    var gate = macroCircuit.gate[i];
+  for (let i = 0; i < macroCircuit.gate.length; i++) {
+    let gate = macroCircuit.gate[i];
     gate.inputs = rename(macroDescription, counter, macroCircuit, gate.inputs);
     gate.outputs = rename(macroDescription, counter, macroCircuit, gate.outputs);
   }
@@ -10,7 +10,7 @@ function renameAndDump(macroDescription, macroCircuit, counter) {
 }
 
 function rename(macro, counter, circuit, wires) {
-  for (var i = 0; i < wires.length; i++) {
+  for (let i = 0; i < wires.length; i++) {
     const wire = wires[i];
     const inputIndex = circuit.inputs.indexOf(wire);
     const outputIndex = circuit.outputs.indexOf(wire);
@@ -26,7 +26,7 @@ function rename(macro, counter, circuit, wires) {
 }
 
 function renameOutputs(currentOutputs, newOutputs, gates) {
-  for (var i = 0; i < gates.length; i++) {
+  for (let i = 0; i < gates.length; i++) {
     const gate = gates[i];
     rename({inputs: [], outputs: newOutputs}, 0, {outputs: currentOutputs, inputs: []}, gate.inputs);
     rename({inputs: [], outputs: newOutputs}, 0, {outputs: currentOutputs, inputs: []}, gate.outputs);
@@ -37,13 +37,13 @@ function removeGaps(circuit) {
   const real = {};
   for (let g of circuit.gate) {
     for (let w of g.inputs.concat(g.outputs)) {
-        real[w] = true;
+      real[w] = true;
     }
   }
 
   const rename = {};
   let first_gap = null;
-  for (var i = 0; i < circuit.wires; i++) {
+  for (let i = 0; i < circuit.wires; i++) {
     if (real[i]) {
       if (first_gap != null) {
         rename[i] = first_gap;
@@ -56,12 +56,12 @@ function removeGaps(circuit) {
 
   circuit.wires = first_gap;
   for (let g of circuit.gate) {
-    for (var i = 0; i < g.inputs.length; i++) {
+    for (let i = 0; i < g.inputs.length; i++) {
       if (rename[g.inputs[i]] != null) {
         g.inputs[i] = rename[g.inputs[i]];
       }
     }
-    for (var i = 0; i < g.outputs.length; i++) {
+    for (let i = 0; i < g.outputs.length; i++) {
       if (rename[g.outputs[i]] != null) {
         g.outputs[i] = rename[g.outputs[i]];
       }
@@ -69,13 +69,8 @@ function removeGaps(circuit) {
   }
 }
 
-function evalDirectives(circuit) {
-
-}
-
 module.exports = {
   renameAndDump: renameAndDump,
   renameOutputs: renameOutputs,
-  removeGaps: removeGaps,
-  evalDirectives: evalDirectives
+  removeGaps: removeGaps
 };
