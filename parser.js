@@ -48,6 +48,11 @@ function parse(text) {
           range_ = range(+range_[0], +range_[0] + +range_[1] - 1, 1);
           line = line.splice(0, j).concat(range_, line.slice(1));
           j += range_.length - 1;
+        } else if (range_.indexOf('*') > -1) {
+          range_ = range_.split('*');
+          range_ = Array(Number(range_[1])).fill(range_[0]);
+          line = line.splice(0, j).concat(range_, line.slice(1));
+          j += range_.length - 1;
         }
       }
     }
